@@ -9,7 +9,7 @@ processes = []
   image = "flyio/hellofly:latest"
 
 [deploy]
-
+release_command = "npm run setup-db"
 [env]
 
 [experimental]
