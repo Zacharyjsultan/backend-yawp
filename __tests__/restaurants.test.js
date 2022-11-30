@@ -4,12 +4,17 @@ const request = require('supertest');
 const app = require('../lib/app');
 const UserService = require('../lib/services/UserService');
 
-// Dummy user for testing
 const mockUser = {
   email: 'me@me.com',
   firstName: 'Jop',
   lastName: 'Iguana',
   password: '123456789987654321',
+};
+const mockAd = {
+  email: 'gmail@snailmail.com',
+  firstName: 'Alcapulco',
+  lastName: 'SMITH',
+  password: '123456',
 };
 
 describe('routes 4 rest. ', () => {
@@ -103,11 +108,21 @@ describe('routes 4 rest. ', () => {
     `);
   });
 
+  const mockReviews = {
+    stars: 5,
+    detail: 'god bless',
+  };
+
   test('/api/v1/reviews/:id', async () => {
-    const [agent] = await registerAndLogin();
-    const res = await agent.delete('/api/v1/reviews/1');
-    expect(res.status).toBe(204);
-    const getRes = await request(app).get('/api/v1/restaurants/1/reviews');
+    // eslint-disable-next-line no-unused-vars
+    const [agent] = await registerAndLogin(mockAd);
+    const review = await agent
+      .post('/api/v1/restaurants/3/reviews')
+      .send(mockReviews);
+    const res = await agent.delete(`/api/v1/reviews/${review.body.id}`);
+    expect(res.status).toBe(200);
+
+    const getRes = await request(app).get(`/api/v1/reviews${review.body.id}`);
     expect(getRes.status).toBe(404);
   });
 });
