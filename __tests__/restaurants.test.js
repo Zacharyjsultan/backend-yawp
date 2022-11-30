@@ -2,10 +2,22 @@ const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
+// user service = require libservicesuswerserv
+
+// Dummy user for testing
+const mockUser = {
+  email: 'me@me.com',
+  firstName: 'Jop',
+  lastName: 'Iguana',
+  passwordHash: '123456789987654321',
+};
 
 describe('routes 4 rest. ', () => {
   beforeEach(() => {
     return setup(pool);
+  });
+  afterAll(() => {
+    pool.end();
   });
 
   test('/api/v1/restaurants get list of rests', async () => {
@@ -49,7 +61,18 @@ describe('routes 4 rest. ', () => {
     `);
   });
 
-  afterAll(() => {
-    pool.end();
+  test('/api/v1/restaurants/:id GE returns a restaurant b ID', async () => {
+    const res = await request(app).get('/api/v1/restaurants/1');
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchInlineSnapshot(`
+    Object {
+      "cost": 1,
+      "cuisine": "American",
+      "id": "1",
+      "image": "https://media-cdn.tripadvisor.com/media/photo-o/05/dd/53/67/an-assortment-of-donuts.jpg",
+      "name": "Pip's Original",
+      "website": "http://www.PipsOriginal.com",
+    }
+  `);
   });
 });
