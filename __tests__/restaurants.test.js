@@ -10,7 +10,7 @@ const mockUser = {
   email: 'me@me.com',
   firstName: 'Jop',
   lastName: 'Iguana',
-  passwordHash: '123456789987654321',
+  password: '123456789987654321',
 };
 
 describe('routes 4 rest. ', () => {
@@ -66,15 +66,15 @@ describe('routes 4 rest. ', () => {
     const res = await request(app).get('/api/v1/restaurants/1');
     expect(res.status).toBe(200);
     expect(res.body).toMatchInlineSnapshot(`
-    Object {
-      "cost": 1,
-      "cuisine": "American",
-      "id": "1",
-      "image": "https://media-cdn.tripadvisor.com/media/photo-o/05/dd/53/67/an-assortment-of-donuts.jpg",
-      "name": "Pip's Original",
-      "website": "http://www.PipsOriginal.com",
-    }
-  `);
+          Object {
+            "cost": 1,
+            "cuisine": "American",
+            "id": "1",
+            "image": "https://media-cdn.tripadvisor.com/media/photo-o/05/dd/53/67/an-assortment-of-donuts.jpg",
+            "name": "Pip's Original",
+            "website": "http://www.PipsOriginal.com",
+          }
+      `);
   });
 
   const registerAndLogin = async (userProps = {}) => {
@@ -93,6 +93,14 @@ describe('routes 4 rest. ', () => {
       .post('/api/v1/restaurants/1/reviews')
       .send({ stars: 5, review: 'This is a test review' });
     expect(res.status).toBe(200);
-    expect(res.body).toMatchInlineSnapshot();
+    expect(res.body).toMatchInlineSnapshot(`
+      Object {
+        "detail": null,
+        "id": "4",
+        "restaurant_id": "1",
+        "stars": 5,
+        "user_id": "4",
+      }
+    `);
   });
 });
