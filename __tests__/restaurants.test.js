@@ -3,7 +3,6 @@ const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
 const UserService = require('../lib/services/UserService');
-// user service = require libservicesuswerserv
 
 // Dummy user for testing
 const mockUser = {
@@ -102,5 +101,13 @@ describe('routes 4 rest. ', () => {
         "user_id": "4",
       }
     `);
+  });
+
+  test('/api/v1/reviews/:id', async () => {
+    const [agent] = await registerAndLogin();
+    const res = await agent.delete('/api/v1/reviews/1');
+    expect(res.status).toBe(204);
+    const getRes = await request(app).get('/api/v1/restaurants/1/reviews');
+    expect(getRes.status).toBe(404);
   });
 });
