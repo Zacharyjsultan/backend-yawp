@@ -2,6 +2,7 @@ const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
+const UserService = require('../lib/services/UserService');
 // user service = require libservicesuswerserv
 
 // Dummy user for testing
@@ -61,7 +62,7 @@ describe('routes 4 rest. ', () => {
     `);
   });
 
-  test('/api/v1/restaurants/:id GE returns a restaurant b ID', async () => {
+  test('/api/v1/restaurants/:id GE returns a rest b ID', async () => {
     const res = await request(app).get('/api/v1/restaurants/1');
     expect(res.status).toBe(200);
     expect(res.body).toMatchInlineSnapshot(`
@@ -74,5 +75,24 @@ describe('routes 4 rest. ', () => {
       "website": "http://www.PipsOriginal.com",
     }
   `);
+  });
+
+  const registerAndLogin = async (userProps = {}) => {
+    const password = userProps.password ?? mockUser.password;
+    const agent = request.agent(app);
+    const user = await UserService.create({ ...mockUser, ...userProps });
+
+    const { email } = user;
+    await agent.post('/api/v1/users/sessions').send({ email, password });
+    return [agent, user];
+  };
+
+  it('POST /api/v1/restaurants/:id/reviews should add a review', async () => {
+    const [agent] = await registerAndLogin();
+    const res = await agent
+      .post('/api/v1/restaurants/1/reviews')
+      .send({ stars: 5, review: 'This is a test review' });
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchInlineSnapshot();
   });
 });
